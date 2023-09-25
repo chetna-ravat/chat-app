@@ -3,7 +3,7 @@
 
 ## Dependencies
 
-All the dependencies required to run this project are available in the [requirements.txt] file.
+All the dependencies required to run this project are available in the [requirements.txt](https://github.com/chetna-ravat/chat-app/blob/main/requirements.txt) file.
 
 ## How to run the project
 
