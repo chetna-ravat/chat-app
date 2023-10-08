@@ -28,7 +28,7 @@ colors = [Fore.BLUE, Fore.CYAN, Fore.GREEN, Fore.LIGHTBLACK_EX,
 clientColor = random.choice(colors)
 
 SEPARATOR = "<SEP>"
-QUITE='q'
+QUIT='q'
 
 def formatMessage(name, msg):
 	now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -53,7 +53,7 @@ def startChat():
 	# Register user
 	while True:
 		name = input("Register your name: ").strip()
-		if name.lower() == QUITE:
+		if name.lower() == QUIT:
 			return
 		if name != "":
 			sendMessage(name, "")
@@ -61,11 +61,13 @@ def startChat():
 
 	print(f"Thank you {name} for registering on our platfrom.")
 	print("You can now start chatting")
+	print("Press q follow by Enter key to quit at any time.")
 
 	# start sending messages	
 	while True:
 		msg = input("> ").strip()
-		if msg.lower() == QUITE:
+		if msg.lower() == QUIT:
+			sendMessage(name, "quit")
 			return
 		if msg != "":
 			sendMessage(name, msg)

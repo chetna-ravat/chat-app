@@ -27,6 +27,8 @@ UNKNOWN = "Unknown"
 # Client name to socket map
 clientSocketToName = dict()
 
+# Unicode color code
+COLOR_UNICODE="\x1b[39m"
 
 def isMsgFormatCorrect(msg):
 	# [{data_time}]SEPARATOR{name}SEPARATOR{msg}
@@ -37,7 +39,16 @@ def getUserName(msg):
 
 def isUserRegistering(msg):
 	msgs = msg.split(SEPARATOR)
-	return msgs[-1].strip() == "\x1b[39m"
+	return msgs[-1].strip() == COLOR_UNICODE
+
+def isUserQuiting(msg):
+	msgs = msg.split(SEPARATOR)
+	return msgs[-1].strip().lower() == f"quit{COLOR_UNICODE}"
+
+def getUserQuitingMsg(msg):
+	msgs = msg.split(SEPARATOR)
+	msgs[-1] = "Left"
+	return f"{SEPARATOR}".join(msgs)	
 
 def handleClient(clientSocket):
 	while True:
@@ -51,17 +62,35 @@ def handleClient(clientSocket):
 			# Update client name
 			if clientSocketToName[clientSocket] == UNKNOWN:
 				clientSocketToName[clientSocket] = name
+
 			if isUserRegistering(msg):
-				print(f"{PLUS}Registering {name}{Fore.RESET}")
+				print(f"{PLUS}[++]Registering {name}{Fore.RESET}")
 				msg += "Joined"
+			elif isUserQuiting(msg):
+				print(f"{CLOSE}[--]Leaving {name}{Fore.RESET}")
+				# remove client from the map
+				del clientSocketToName[clientSocket]
+				msg = getUserQuitingMsg(msg)
 			else:
 				print(f"msg received from {Fore.BLUE}{name}{Fore.RESET}")
 			msg = msg.replace(SEPARATOR, ": ")
 		
-		clientSockets = clientSocketToName.keys()	
+		# clientSocketToName map can get change in middle of looping
+		# if some client leaves or new client gets joined.
+		# This will lead us to exceptopn: "Dictionary changes the size during
+		# iteration. To avoid this copy keys into tuple and iterator over it.
+		clientSockets = tuple(clientSocketToName.keys())
 		for cs in clientSockets:
 			if cs != clientSocket:
-				cs.send(msg.encode())
+				try:
+					cs.send(msg.encode())
+				except socket.error as e:
+					print(f"Socket error encountered for {clientSocketToName[cs]}")
+				except IOError as e:
+					if e.errno == errno.EPIPE:
+						print(f"client pipe is broken")
+					else:
+						print(f"Unknown error {e} encountered")
 	
 
 if __name__ == "__main__":
