@@ -7,6 +7,10 @@ Each message will be relyed to all the other client connected to server at that 
 Each user registers to server to start sending messaged on the platfrom.
 All user connected to platfrom will get notification when new user joins or existing user exists platfrom.
 
+## Demo
+https://github.com/chetna-ravat/chat-app/assets/61097652/be6e8945-dcb3-444f-a6e5-bbdb6bff1101
+
+
 ## Dependencies
 
 All the dependencies required to run this project are available in the [requirements.txt](https://github.com/chetna-ravat/chat-app/blob/main/requirements.txt) file.
